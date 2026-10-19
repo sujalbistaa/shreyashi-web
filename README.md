@@ -13,21 +13,19 @@ npm run preview    # serves dist/ at http://localhost:4321
 
 Requires Node 20+.
 
-## Deploy (free, on Cloudflare Pages)
+## Deploy (free, on Netlify)
+
+`netlify.toml` holds the build settings (command, `dist` folder, Node 24, cache headers), so there is nothing to configure by hand.
 
 1. Push this folder to the GitHub repository (`shreyash-web`).
-2. Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** → **Connect to Git** → choose `shreyash-web`.
-3. Build settings:
-   - Framework preset: **Astro**
-   - Build command: `npm run build`
-   - Build output directory: `dist`
-4. Environment variables (Production):
-   - `NODE_VERSION` = `24` (Astro 7 needs Node 22.22 or newer; `.node-version` says the same)
-   - `SITE_URL` = the site's address, e.g. `https://shreyash-web.pages.dev`. Canonical links, the sitemap, robots.txt, share images and structured data all use it.
-5. **Save and Deploy.** Every later `git push` to `main` redeploys automatically.
-6. Optional: **Custom domains** → add a domain, follow the DNS steps, then update `SITE_URL` and redeploy.
+2. app.netlify.com → **Add new site** → **Import an existing project** → **GitHub** → choose `shreyash-web`.
+3. Leave the detected settings as they are and click **Deploy**.
+4. Optional: **Site configuration → Change site name** to pick the `*.netlify.app` address, then **Deploys → Trigger deploy** so links use the new name.
+5. Optional: **Domain management → Add a domain** for a custom domain. Netlify passes the address to the build (`URL`), so no code change is needed. Just redeploy.
 
-Netlify and Vercel work the same way: same build command, same `dist` folder, same two variables.
+Every later `git push` to `main` redeploys automatically.
+
+Other hosts (Cloudflare Pages, Vercel) work too: build command `npm run build`, output `dist`, environment variables `NODE_VERSION=24` and `SITE_URL=<the site's address>`.
 
 ## Where things live
 
