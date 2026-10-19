@@ -1,0 +1,82 @@
+/*
+ * Self-hosted faces, slimmed from the Fontsource packages by scripts/build-fonts.py.
+ * Fallback overrides come from scripts/fallback-metrics.py so the swap does not move text.
+ */
+
+@font-face {
+  font-family: 'Bricolage';
+  src: url('../assets/fonts/bricolage.woff2') format('woff2');
+  font-weight: 500 800;
+  font-stretch: 75% 100%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  src: url('../assets/fonts/newsreader-italic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Serif';
+  src: url('../assets/fonts/source-serif-roman.woff2') format('woff2');
+  font-weight: 400 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Source Serif';
+  src: url('../assets/fonts/source-serif-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plex Mono';
+  src: url('../assets/fonts/plex-mono.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Bricolage Fallback';
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 79.41%;
+  ascent-override: 117.11%;
+  descent-override: 34%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Newsreader Fallback';
+  src: local('Georgia Italic'), local('Georgia-Italic');
+  font-style: italic;
+  size-adjust: 84.7%;
+  ascent-override: 86.78%;
+  descent-override: 31.29%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Source Serif Fallback';
+  src: local('Georgia');
+  size-adjust: 101.61%;
+  ascent-override: 101.96%;
+  descent-override: 32.97%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Plex Mono Fallback';
+  src: local('Courier New');
+  size-adjust: 99.98%;
+  ascent-override: 102.52%;
+  descent-override: 27.5%;
+  line-gap-override: 0%;
+}

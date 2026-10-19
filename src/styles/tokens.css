@@ -1,0 +1,91 @@
+/*
+ * Design tokens. The only place colours, type, space and motion are defined.
+ * Light only: bright paper, ink, ladybird red, and four magazine tints for colour-blocking.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Colour */
+  --paper: #fbf8f3;
+  --paper-sunk: #f1ece3;
+  --ink: #161514;
+  --ink-2: #45413b; /* ≥7:1 on paper and every tint */
+  --ink-3: #625d55; /* ≥4.6:1 on paper and every tint — smallest text colour allowed */
+  --rule: #ddd6ca;
+  --rule-strong: #b5ad9f;
+
+  --red: #e2362b; /* ladybird: blocks, large type, marks */
+  --accent: #d42f24; /* small red text on paper, 4.7:1 */
+  --accent-deep: #b8241b; /* small red text on tints, ≥4.5:1 */
+
+  --pink: #fad3dc;
+  --lilac: #dcd5fa;
+  --butter: #f9e79b;
+  --mint: #c9ebd5;
+
+  /* Essay themes */
+  --tint-gender: var(--pink);
+  --tint-nature: var(--mint);
+  --tint-climate: var(--butter);
+
+  --selection: var(--butter);
+
+  /* Type */
+  --font-display: 'Bricolage', 'Bricolage Fallback', 'Arial Narrow', Arial, sans-serif;
+  --font-accent: 'Newsreader', 'Newsreader Fallback', Georgia, serif; /* italic only */
+  --font-text: 'Source Serif', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Plex Mono', 'Plex Mono Fallback', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --step--2: 0.75rem; /* mono labels */
+  --step--1: clamp(0.875rem, 0.85rem + 0.1vw, 0.9375rem);
+  --step-0: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-prose: clamp(1.125rem, 1.03rem + 0.38vw, 1.3125rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --step-2: clamp(1.625rem, 1.3rem + 1.3vw, 2.5rem);
+  --step-3: clamp(2.125rem, 1.5rem + 2.6vw, 4rem);
+  --step-4: clamp(3.25rem, 1.5rem + 8vw, 9rem);
+  /* "SHREYASHI" is 3.47em wide at 800/75; this fills the measure from 360px up */
+  --step-mast: clamp(5.25rem, 25.5vw, 22rem);
+  --step-email: clamp(1.5rem, 7.5vw, 4.5rem); /* the address is 11.6em wide in italic */
+
+  --leading-display: 0.9;
+  --leading-tight: 1.05;
+  --leading-prose: 1.6;
+  --measure: 64ch;
+  --tracking-label: 0.08em;
+  --tracking-display: -0.025em;
+
+  /* Space: a 4px base, fluid at the large end */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: clamp(2.5rem, 2rem + 2vw, 3.5rem);
+  --space-8: clamp(3.5rem, 2.5rem + 4vw, 6rem);
+  --space-9: clamp(5rem, 3rem + 8vw, 10rem);
+
+  /* Grid */
+  --margin: clamp(1rem, 4vw, 4rem);
+  --gutter: clamp(1rem, 1.6vw, 2rem);
+  --columns: 4;
+  --max: 90rem;
+
+  --hairline: 1px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.21, 1);
+  --dur-hover: 160ms;
+  --dur-reveal: 240ms;
+  --dur-page: 380ms;
+}
+
+@media (min-width: 48em) {
+  :root { --columns: 8; }
+}
+
+@media (min-width: 64em) {
+  :root { --columns: 12; }
+}

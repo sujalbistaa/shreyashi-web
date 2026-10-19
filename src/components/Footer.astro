@@ -1,0 +1,75 @@
+---
+import { person } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-foot">
+  <div class="wrap grid inner">
+    <p class="label mark">© {year} {person.name}</p>
+    <ul class="links">
+      <li><a href={`mailto:${person.email}`}>Email</a></li>
+      <li><a href={person.researchGate} rel="me">ResearchGate</a></li>
+      <li><a href={person.cvPdf}>CV (PDF)</a></li>
+      <li><a href="/colophon">Colophon</a></li>
+    </ul>
+  </div>
+</footer>
+
+
+
+<style>
+  .site-foot {
+    margin-top: var(--space-9);
+    background: var(--paper-sunk);
+  }
+
+  .inner {
+    row-gap: var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-5) var(--space-6);
+  }
+
+  .mark {
+    grid-column: 1 / -1;
+  }
+
+  .links {
+    grid-column: 1 / -1;
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+  }
+
+  .links a {
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-2);
+    display: inline-block;
+    padding-block: var(--space-2);
+  }
+
+  .links a:hover {
+    color: var(--accent);
+  }
+
+  @media (min-width: 48em) {
+    .mark {
+      grid-column: 1 / span 3;
+    }
+    .links {
+      grid-column: 4 / span 4;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .links {
+      grid-column: 7 / span 5;
+    }
+  }
+</style>

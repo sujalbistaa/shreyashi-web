@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+qa/
+
+# Source material (CV, .docx essays, original photos). Kept locally, not published.
+context/
+.env

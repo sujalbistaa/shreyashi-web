@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found" description="There is nothing at this address." noindex>
+  <header class="page-head wrap grid">
+    <p class="label">404</p>
+    <h1 class="page-title">Off the trail.</h1>
+    <p class="page-lede">There’s nothing at this address. It may have moved, or it never existed.</p>
+  </header>
+  <nav class="wrap grid" aria-label="Ways back">
+    <p class="links">
+      <a class="arrow-link" href="/">Home</a>
+      <a class="arrow-link" href="/writing">Writing</a>
+      <a class="arrow-link" href="/research">Research</a>
+    </p>
+  </nav>
+</Base>
+
+<style>
+  .links {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-6);
+  }
+
+  @media (min-width: 64em) {
+    .links {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

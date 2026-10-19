@@ -1,0 +1,189 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import CatalogueCard from '../components/CatalogueCard.astro';
+import TapedPrint from '../components/TapedPrint.astro';
+import community from '../assets/images/research-community.jpg';
+import riverbed from '../assets/images/research-riverbed.jpg';
+import { dissertations, interests, presentations, publications } from '../data/research';
+import { person } from '../data/site';
+---
+
+<Base
+  title="Research"
+  description="Publications, theses and presentations by Shreyashi Bista on human–wildlife coexistence, wildlife ecology and conservation governance in Nepal."
+>
+  <header class="page-head wrap grid bleed" style="--band: var(--mint)">
+    <p class="label">02 — Research</p>
+    <h1 class="page-title">Research</h1>
+    <p class="page-lede">How people and wildlife share land in Nepal, and who is included when conservation decisions are made.</p>
+  </header>
+
+  <section class="wrap block" aria-labelledby="field">
+    <SectionHead number="01" title="From the field" id="field" />
+    <div class="prints">
+      <TapedPrint
+        class="f1"
+        image={community}
+        alt="Shreyashi Bista stands at the front of a community hall, gesturing as she speaks to around twenty-five seated people, with posters on the wall and a projector on the desk beside her."
+        caption="Leading a community session, January 2024"
+        tilt={-1.5}
+        widths={[480, 720, 960, 1280]}
+        sizes="(min-width: 64em) 58vw, 92vw"
+        loading="eager"
+        priority
+      />
+      <TapedPrint
+        class="f2"
+        image={riverbed}
+        alt="Shreyashi Bista, with a backpack and a jacket over her arm, looks up a boulder-strewn riverbed in dense forest."
+        caption="On a field trip, January 2024"
+        tilt={3}
+        tape={6}
+        widths={[360, 540, 720, 960]}
+        sizes="(min-width: 64em) 40vw, 80vw"
+      />
+    </div>
+  </section>
+
+  <section class="wrap block" aria-labelledby="interests">
+    <SectionHead number="02" title="Interests" id="interests" />
+    <ul class="interests" role="list">
+      {interests.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class="wrap block" aria-labelledby="publications">
+    <SectionHead number="03" title="Publications" id="publications" href={person.researchGate} linkLabel="ResearchGate" />
+    <ol class="cards" role="list">
+      {
+        publications.map((p, i) => (
+          <CatalogueCard
+            index={i}
+            mark={p.year ? String(p.year) : (p.status ?? 'n.d.')}
+            note={p.role}
+            title={p.title}
+            byline={p.authors}
+            venue={p.venue}
+            details={p.details}
+            href={p.href}
+            linkLabel={p.linkLabel}
+          />
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap block" aria-labelledby="theses">
+    <SectionHead number="04" title="Theses" id="theses" />
+    <ol class="cards" role="list">
+      {
+        dissertations.map((t, i) => (
+          <CatalogueCard index={i + 2} mark={t.years} note={t.note} title={t.title} byline={t.degree} />
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="wrap block" aria-labelledby="presentations">
+    <SectionHead number="05" title="Presentations" id="presentations" />
+    <ol class="cards" role="list">
+      {
+        presentations.map((t, i) => (
+          <CatalogueCard index={i + 1} mark={t.year} note={t.kind} title={t.title} byline={t.event} />
+        ))
+      }
+    </ol>
+  </section>
+</Base>
+
+<style>
+  .block + .block {
+    margin-top: var(--space-8);
+  }
+
+  /* Two field prints, the second overlapping the first's lower corner. */
+  .prints {
+    display: flow-root;
+    padding-top: var(--space-4);
+  }
+
+  .prints :global(.f1) {
+    width: 100%;
+  }
+
+  .prints :global(.f2) {
+    position: relative;
+    z-index: 1;
+    width: 84%;
+    margin-left: auto;
+    margin-top: var(--space-6); /* no overlap on phones, so the first caption stays readable */
+  }
+
+  @media (min-width: 64em) {
+    .prints :global(.f1) {
+      width: 62%;
+    }
+    .prints :global(.f2) {
+      width: 44%;
+      margin-top: -22%;
+      margin-right: 2%;
+    }
+  }
+
+  /* Interests run on as one line of type, spotted like a ladybird. */
+  .interests {
+    list-style: none;
+    padding: 0;
+    max-width: 62rem;
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    font-stretch: 82%;
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+
+  .interests li {
+    display: inline;
+  }
+
+  .interests li:not(:last-child)::after {
+    content: '';
+    display: inline-block;
+    width: 0.42em;
+    aspect-ratio: 1;
+    margin-inline: 0.4em;
+    border-radius: 50%;
+    background: var(--red);
+    vertical-align: 0.12em;
+  }
+
+  .interests li:nth-child(even) {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-weight: 300;
+    font-stretch: 100%;
+    letter-spacing: -0.01em;
+  }
+
+  .cards {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-6) var(--gutter);
+  }
+
+  @media (min-width: 48em) {
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64em) {
+    .cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

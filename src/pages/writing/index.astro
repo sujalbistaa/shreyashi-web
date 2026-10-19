@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import CoverLines from '../../components/CoverLines.astro';
+import { getEssays } from '../../lib/essays';
+
+const essays = await getEssays();
+---
+
+<Base title="Writing" description="Personal essays by Shreyashi Bista on gender, family and ritual, and on nature and the climate.">
+  <header class="page-head wrap grid bleed" style="--band: var(--pink)">
+    <p class="label">01 — Writing</p>
+    <h1 class="page-title">Writing</h1>
+    <p class="page-lede">Five personal essays: on gender, family and ritual, and on nature and the climate.</p>
+  </header>
+  <section class="wrap essays" aria-label="Essays">
+    <CoverLines essays={essays} summaries headingLevel="h2" />
+  </section>
+</Base>
+
+<style>
+  .essays {
+    margin-top: var(--space-8);
+  }
+</style>

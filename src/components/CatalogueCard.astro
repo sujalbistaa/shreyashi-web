@@ -1,0 +1,138 @@
+---
+/**
+ * A library catalogue card: call-number row, red index line, the record, and a
+ * punched hole for the drawer rod. Cards sit slightly askew and straighten on hover.
+ */
+interface Props {
+  /** Top-left, like a call number: year or status. */
+  mark: string;
+  /** Top-right: role, kind or distinction. */
+  note?: string;
+  /** May contain <i> for species names. */
+  title: string;
+  /** May contain <b>/<i>. */
+  byline?: string;
+  venue?: string;
+  details?: string;
+  href?: string;
+  linkLabel?: string;
+  index?: number;
+  headingLevel?: 'h3' | 'h4';
+}
+
+const { mark, note, title, byline, venue, details, href, linkLabel, index = 0, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const tilt = [-0.8, 0.6, -0.4, 0.9, -0.6][index % 5];
+---
+
+<li class="card" style={`--tilt: ${tilt}deg`}>
+  <p class="call">
+    <span class="mark">{mark}</span>
+    {note && <span class="note">{note}</span>}
+  </p>
+  <Heading class="title" set:html={title} />
+  {byline && <p class="byline" set:html={byline} />}
+  {
+    (venue || details) && (
+      <p class="source">
+        {venue && <i>{venue}</i>}
+        {details && <span class="num">{details}</span>}
+      </p>
+    )
+  }
+  {href && <a class="link" href={href}>{linkLabel}</a>}
+  <span class="hole" aria-hidden="true"></span>
+</li>
+
+<style>
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) var(--space-8);
+    background: #fffdf8;
+    border: 1.5px solid var(--ink);
+    rotate: var(--tilt);
+    transition:
+      rotate var(--dur-reveal) var(--ease),
+      translate var(--dur-reveal) var(--ease);
+  }
+
+  .card:hover,
+  .card:focus-within {
+    rotate: 0deg;
+    translate: 0 -4px;
+  }
+
+  /* Call-number row over the red index line. */
+  .call {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--red);
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .mark {
+    color: var(--ink);
+  }
+
+  .note {
+    color: var(--ink-3);
+    text-align: right;
+  }
+
+  .title {
+    font-size: var(--step-1);
+    font-weight: 700;
+    font-stretch: 88%;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+
+  .byline,
+  .source {
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  .byline :global(b) {
+    color: var(--ink);
+  }
+
+  .source {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-3);
+  }
+
+  .link {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: var(--step--2);
+    letter-spacing: 0.02em;
+    color: var(--ink-2);
+    text-decoration-color: var(--red);
+  }
+
+  /* The punched hole for the drawer rod. */
+  .hole {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-4);
+    width: 1.1rem;
+    aspect-ratio: 1;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: var(--band, var(--paper));
+    border: 1.5px solid var(--ink);
+  }
+</style>

@@ -1,0 +1,79 @@
+---
+interface Props {
+  number: string;
+  title: string;
+  id: string;
+  href?: string;
+  linkLabel?: string;
+}
+
+const { number, title, id, href, linkLabel } = Astro.props;
+---
+
+<header class="section-head">
+  <h2 id={id}>
+    <span class="spot" aria-hidden="true">{number}</span>
+    <span class="title">{title}</span>
+  </h2>
+  {href && <a class="more" href={href}>{linkLabel}<span aria-hidden="true"> →</span></a>}
+</header>
+
+<style>
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    margin-bottom: var(--space-7);
+  }
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.28em;
+    font-size: var(--step-3);
+    font-weight: 800;
+    font-stretch: 75%;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  /* The section number sits in a ladybird's spot. */
+  .spot {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 1.9em;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--red);
+    color: var(--paper);
+    font-size: max(0.5em, 1.25rem);
+    font-weight: 800;
+    font-stretch: 85%;
+    letter-spacing: -0.02em;
+    font-variant-numeric: lining-nums tabular-nums;
+    rotate: -8deg;
+  }
+
+  .more {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 85%;
+    font-size: var(--step-0);
+    letter-spacing: -0.01em;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--red);
+  }
+
+  .more span {
+    display: inline-block;
+    transition: translate var(--dur-hover) var(--ease);
+  }
+
+  .more:hover span {
+    translate: 4px 0;
+  }
+</style>

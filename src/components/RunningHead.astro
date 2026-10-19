@@ -1,0 +1,232 @@
+---
+/**
+ * The nav as index tabs hanging from the top edge of the page, each in its section's
+ * tint, like dividers in a field notebook. The current section's tab hangs lower.
+ * Tabs swing a little on hover. The name carries a drawn ladybird.
+ */
+import { nav, person } from '../data/site';
+import { isCurrent, publicPath } from '../lib/url';
+
+const path = Astro.url.pathname;
+const atHome = publicPath(path) === '/';
+const tilts = [-2, 1.5, -1, 2];
+---
+
+<header class="running-head">
+  <div class="wrap inner">
+    <a class="name" href="/" aria-current={atHome ? 'page' : undefined}>
+      <svg class="bug" viewBox="0 0 32 32" aria-hidden="true">
+        <ellipse cx="16" cy="18.5" rx="11" ry="11.5" fill="#e2362b" />
+        <path d="M16 8.5 V30" stroke="#161514" stroke-width="1.6" />
+        <circle cx="16" cy="7.5" r="4.6" fill="#161514" />
+        <path d="M13.6 3.6 L11.4 1.2 M18.4 3.6 L20.6 1.2" stroke="#161514" stroke-width="1.4" stroke-linecap="round" />
+        <circle cx="10.6" cy="15.4" r="2.2" fill="#161514" />
+        <circle cx="21.4" cy="15.4" r="2.2" fill="#161514" />
+        <circle cx="10" cy="23" r="1.9" fill="#161514" />
+        <circle cx="22" cy="23" r="1.9" fill="#161514" />
+      </svg>
+      <span>{person.name}</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          nav.map((item, i) => (
+            <li style={`--tab: ${item.tint}; --tilt: ${tilts[i % tilts.length]}deg`}>
+              <a href={item.href} aria-current={isCurrent(path, item.href) ? 'page' : undefined}>
+                <span class="num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .running-head {
+    position: relative;
+    z-index: 2;
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+  }
+
+  /* Name ---------------------------------------------------------------- */
+  .name {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-family: var(--font-display);
+    font-size: 1.3125rem;
+    font-weight: 780;
+    font-stretch: 82%;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  .name:hover {
+    color: inherit;
+  }
+
+  .bug {
+    width: 1.35em;
+    height: 1.35em;
+    rotate: -18deg;
+    transition: rotate var(--dur-reveal) var(--ease);
+  }
+
+  .name:hover .bug,
+  .name:focus-visible .bug {
+    rotate: 24deg;
+  }
+
+  /* Tabs ------------------------------------------------------------------ */
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  li {
+    flex: 1;
+    transform-origin: 50% 0;
+    rotate: var(--tilt);
+  }
+
+  nav a {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    padding: var(--space-4) var(--space-3) var(--space-3);
+    background: var(--tab);
+    border: 1.5px solid var(--ink);
+    border-top: 0;
+    border-radius: 0 0 0.6rem 0.6rem;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
+    font-weight: 750;
+    font-stretch: 85%;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    text-decoration: none;
+    transition: translate var(--dur-reveal) var(--ease);
+  }
+
+  /* The tab continues up past the top of the page, so it can drop without a gap. */
+  nav a::before {
+    content: '';
+    position: absolute;
+    left: -1.5px;
+    right: -1.5px;
+    bottom: calc(100% - 2px);
+    height: 3rem;
+    background: var(--tab);
+    border-inline: 1.5px solid var(--ink);
+  }
+
+  .num {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: var(--tracking-label);
+  }
+
+  nav a:hover {
+    color: var(--ink);
+    translate: 0 4px;
+  }
+
+  @keyframes swing {
+    0% {
+      rotate: var(--tilt);
+    }
+    30% {
+      rotate: calc(var(--tilt) + 4deg);
+    }
+    60% {
+      rotate: calc(var(--tilt) - 3deg);
+    }
+    85% {
+      rotate: calc(var(--tilt) + 1.5deg);
+    }
+    100% {
+      rotate: var(--tilt);
+    }
+  }
+
+  li:hover {
+    animation: swing 650ms var(--ease);
+  }
+
+  /* The current section's tab hangs lower and is set heavier. */
+  nav a[aria-current='page'] {
+    translate: 0 0.6rem;
+    font-weight: 800;
+  }
+
+  nav a[aria-current='page'] .num::after {
+    content: '';
+    display: inline-block;
+    width: 0.55em;
+    height: 0.55em;
+    margin-left: 0.45em;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  nav a:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (min-width: 48em) {
+    .inner {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: var(--space-5);
+    }
+
+    .name {
+      margin-top: var(--space-5);
+      font-size: 1.4375rem;
+    }
+
+    ul {
+      gap: var(--space-3);
+    }
+
+    li {
+      flex: none;
+    }
+
+    nav a {
+      min-width: 6.75rem;
+      padding: var(--space-5) var(--space-4) var(--space-3);
+      font-size: 1.0625rem;
+    }
+
+    /* On desktop the current tab hangs down into its section's colour band. */
+    nav a[aria-current='page'] {
+      translate: 0 1.75rem;
+    }
+  }
+
+  @media (min-width: 64em) {
+    nav a {
+      min-width: 8rem;
+    }
+  }
+</style>

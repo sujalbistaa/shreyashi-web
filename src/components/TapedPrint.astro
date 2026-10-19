@@ -1,0 +1,92 @@
+---
+/**
+ * A photographic print taped to the page: white border, caption on the lower margin,
+ * a strip of masking tape across the top, set at a slight angle.
+ */
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  caption?: string;
+  /** Rotation of the print, in degrees. */
+  tilt?: number;
+  /** Rotation of the tape, in degrees. */
+  tape?: number;
+  widths?: number[];
+  sizes: string;
+  loading?: 'eager' | 'lazy';
+  priority?: boolean;
+  class?: string;
+}
+
+const {
+  image,
+  alt,
+  caption,
+  tilt = -2,
+  tape = -5,
+  widths = [320, 480, 640, 960],
+  sizes,
+  loading = 'lazy',
+  priority = false,
+  class: className,
+} = Astro.props;
+---
+
+<figure class:list={['print', className]} style={`--tilt: ${tilt}deg; --tape: ${tape}deg`}>
+  <Picture
+    src={image}
+    alt={alt}
+    formats={['avif', 'webp']}
+    widths={widths.filter((w) => w <= image.width)}
+    sizes={sizes}
+    loading={loading}
+    fetchpriority={priority ? 'high' : undefined}
+  />
+  {caption && <figcaption class="label">{caption}</figcaption>}
+</figure>
+
+<style>
+  .print {
+    position: relative;
+    margin: 0;
+    padding: 0.5rem 0.5rem 2.1rem;
+    background: #fffdf8;
+    border: 1.5px solid var(--ink);
+    rotate: var(--tilt);
+  }
+
+  .print :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper-sunk);
+  }
+
+  figcaption {
+    position: absolute;
+    left: 0.6rem;
+    right: 0.6rem;
+    bottom: 0.55rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* A strip of masking tape across the top edge. */
+  .print::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: -0.8rem;
+    left: 50%;
+    width: 5rem;
+    height: 1.5rem;
+    translate: -50% 0;
+    background: rgb(249 231 155 / 0.82);
+    rotate: var(--tape);
+  }
+</style>

@@ -1,0 +1,305 @@
+---
+import { render } from 'astro:content';
+import '../../styles/prose.css';
+import Base from '../../layouts/Base.astro';
+import Plate from '../../components/Plate.astro';
+import { essayHref, getEssays, pad, type Essay } from '../../lib/essays';
+import { articleLd } from '../../lib/seo';
+
+export async function getStaticPaths() {
+  const essays = await getEssays();
+  return essays.map((essay, i) => ({
+    params: { slug: essay.id },
+    props: { essay, prev: essays[i - 1], next: essays[i + 1] },
+  }));
+}
+
+interface Props {
+  essay: Essay;
+  prev?: Essay;
+  next?: Essay;
+}
+
+const { essay, prev, next } = Astro.props;
+const { Content } = await render(essay);
+const d = essay.data;
+// Landscape photographs run wider than portrait ones.
+const landscape = d.image ? d.image.width > d.image.height : false;
+---
+
+<Base
+  title={d.title}
+  description={d.summary}
+  ogImage={`/og/${essay.id}.png`}
+  type="article"
+  jsonLd={[articleLd(essay, Astro.site!)]}
+>
+  <article data-tint={d.theme}>
+    <header class="essay-head band">
+      <div class="wrap grid">
+        <p class="label kicker">
+          <a href="/writing">Writing</a> — No. {pad(d.number)}
+        </p>
+        <h1 class="title">
+          <span>{d.title}</span>
+          {d.subtitle && <span class="subtitle serif-i">{d.subtitle}</span>}
+        </h1>
+      </div>
+    </header>
+
+    {
+      d.image && (
+        <div class="wrap grid plate-row">
+          <Plate
+            class:list={['essay-plate', { landscape }]}
+            number="I"
+            image={d.image}
+            alt={d.imageAlt}
+            loading="eager"
+            sizes="(min-width: 64em) 60vw, 100vw"
+          />
+        </div>
+      )
+    }
+
+    <div class="wrap grid body">
+      <dl class="marginalia">
+        <div><dt class="label">Theme</dt><dd><span class="tag">{d.theme}</span></dd></div>
+        <div><dt class="label">Year</dt><dd class="num">{d.year}</dd></div>
+        <div><dt class="label">Reading</dt><dd>{d.readingTime} minutes</dd></div>
+        <div><dt class="label">Length</dt><dd><span class="num">{d.words}</span> words</dd></div>
+      </dl>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="wrap grid essay-foot" aria-label="More essays">
+      {
+        prev ? (
+          <a class="sibling prev" href={essayHref(prev)} rel="prev" data-tint={prev.data.theme}>
+            <span class="label">← Previous, No. {pad(prev.data.number)}</span>
+            <span class="sib-title">{prev.data.title}</span>
+          </a>
+        ) : (
+          <span class="sibling prev" />
+        )
+      }
+      {
+        next ? (
+          <a class="sibling next" href={essayHref(next)} rel="next" data-tint={next.data.theme}>
+            <span class="label">Next, No. {pad(next.data.number)} →</span>
+            <span class="sib-title">{next.data.title}</span>
+          </a>
+        ) : (
+          <a class="sibling next" href="/writing" data-tint="shelf">
+            <span class="label">Back to the index →</span>
+            <span class="sib-title">All writing</span>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .essay-head {
+    --band: var(--tint);
+    padding-block: var(--space-7) var(--space-8);
+    margin-bottom: var(--space-7);
+  }
+
+  .kicker {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-5);
+  }
+
+  .kicker {
+    color: var(--ink-2);
+  }
+
+  .kicker a {
+    color: var(--ink);
+  }
+
+  .title {
+    grid-column: 1 / -1;
+    font-size: clamp(2.5rem, 1.4rem + 5vw, 7rem);
+    font-weight: 800;
+    font-stretch: 78%;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+  }
+
+  .subtitle {
+    display: block;
+    margin-top: var(--space-3);
+    font-size: 0.55em;
+    line-height: 1.05;
+    color: var(--ink-2);
+  }
+
+  .plate-row {
+    margin-bottom: var(--space-7);
+  }
+
+  .plate-row :global(.essay-plate) {
+    grid-column: 1 / -1;
+  }
+
+  .body {
+    row-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .marginalia {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-5);
+  }
+
+  .marginalia div {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+
+  .marginalia dd {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+
+  .marginalia .tag {
+    background: var(--tint);
+  }
+
+  .prose {
+    grid-column: 1 / -1;
+  }
+
+  .essay-foot {
+    margin-top: var(--space-8);
+    row-gap: var(--space-4);
+  }
+
+  .sibling {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-height: 9rem;
+    padding: var(--space-5);
+    background: var(--tint, var(--lilac));
+    text-decoration: none;
+    transition: rotate var(--dur-reveal) var(--ease);
+  }
+
+  .sibling.prev:hover {
+    rotate: -1deg;
+  }
+
+  .sibling.next:hover {
+    rotate: 1deg;
+  }
+
+  .sibling .label {
+    color: var(--ink);
+  }
+
+  .sibling:empty {
+    display: none;
+  }
+
+  .sib-title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 700;
+    font-stretch: 85%;
+    line-height: 1.02;
+    text-wrap: balance;
+    transition: transform var(--dur-reveal) var(--ease);
+  }
+
+  .sibling:hover {
+    color: inherit;
+  }
+
+  .sibling:hover .label {
+    color: var(--accent-deep);
+  }
+
+  .prev:hover .sib-title {
+    transform: translateX(-4px);
+  }
+
+  .next:hover .sib-title {
+    transform: translateX(4px);
+  }
+
+  @media (min-width: 48em) {
+    .title,
+    .kicker {
+      grid-column: 2 / -1;
+    }
+    .plate-row :global(.essay-plate) {
+      grid-column: 2 / span 6;
+    }
+    .marginalia,
+    .prose {
+      grid-column: 2 / -1;
+    }
+    .sibling.prev {
+      grid-column: 1 / span 4;
+    }
+    .sibling.next {
+      grid-column: 5 / -1;
+      text-align: right;
+    }
+    .sibling:empty {
+      display: block;
+      background: none;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .kicker {
+      grid-column: 1 / span 3;
+      margin: 0;
+      padding-top: 1em;
+    }
+    .title {
+      grid-column: 4 / span 9;
+    }
+    .plate-row :global(.essay-plate) {
+      grid-column: 4 / span 5;
+    }
+    .plate-row :global(.essay-plate.landscape) {
+      grid-column: 4 / span 8;
+    }
+    .marginalia {
+      grid-column: 1 / span 2;
+      position: sticky;
+      top: var(--space-6);
+      flex-direction: column;
+      gap: var(--space-4);
+      padding: 0;
+      border: 0;
+    }
+    .marginalia div {
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .prose {
+      grid-column: 4 / span 7;
+    }
+    .sibling.prev {
+      grid-column: 1 / span 6;
+    }
+    .sibling.next {
+      grid-column: 7 / -1;
+    }
+  }
+</style>

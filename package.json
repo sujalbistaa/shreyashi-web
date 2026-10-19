@@ -1,0 +1,37 @@
+{
+  "name": "shreyashi-bista",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "qa:screens": "node scripts/screenshots.mjs",
+    "qa:axe": "node scripts/axe.mjs",
+    "qa:lighthouse": "node scripts/lighthouse.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/bricolage-grotesque": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.4.1",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.11",
+    "@axe-core/playwright": "^4.14.0",
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/newsreader": "^5.3.0",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.64.1",
+    "satori": "^0.63.0",
+    "typescript": "^6.0.3"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

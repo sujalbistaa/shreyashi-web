@@ -1,0 +1,98 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  /** Roman numeral or short label, e.g. "I". */
+  number?: string;
+  image?: ImageMetadata;
+  alt?: string;
+  caption?: string;
+  /** When no image has been supplied yet: what the photograph will show. */
+  forthcoming?: string;
+  sizes?: string;
+  ratio?: string;
+  loading?: 'eager' | 'lazy';
+  class?: string;
+}
+
+const {
+  number,
+  image,
+  alt = '',
+  caption,
+  forthcoming,
+  sizes = '(min-width: 64em) 40vw, 100vw',
+  ratio = '4 / 5',
+  loading = 'lazy',
+  class: className,
+} = Astro.props;
+---
+
+<figure class:list={['plate', className]}>
+  {
+    image ? (
+      <Picture
+        src={image}
+        alt={alt}
+        formats={['avif', 'webp']}
+        widths={[360, 540, 720, 960, 1200].filter((w) => w <= image.width)}
+        sizes={sizes}
+        loading={loading}
+        decoding="async"
+        fetchpriority={loading === 'eager' ? 'high' : undefined}
+      />
+    ) : (
+      <div class="frame" style={`aspect-ratio: ${ratio}`}>
+        <span class="label">Photograph forthcoming</span>
+      </div>
+    )
+  }
+  {
+    (caption || forthcoming || number) && (
+      <figcaption class="label">
+        {number && <span class="no">Plate {number}</span>}
+        {caption ?? forthcoming}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .plate {
+    margin: 0;
+  }
+
+  .plate :global(img) {
+    width: 100%;
+    height: auto;
+    background: var(--paper-sunk);
+  }
+
+  .frame {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    background: var(--paper-sunk);
+    border: var(--hairline) solid var(--rule);
+  }
+
+  .frame .label {
+    color: var(--ink-2);
+  }
+
+  figcaption {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+    text-transform: none;
+    letter-spacing: 0.02em;
+  }
+
+  .no {
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+</style>

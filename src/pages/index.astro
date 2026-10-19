@@ -1,0 +1,537 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import TapedPrint from '../components/TapedPrint.astro';
+import CoverLines from '../components/CoverLines.astro';
+import CatalogueCard from '../components/CatalogueCard.astro';
+import { getEssays } from '../lib/essays';
+import { personLd } from '../lib/seo';
+import { intro, person } from '../data/site';
+import { publications } from '../data/research';
+import portrait from '../assets/images/portrait.jpg';
+import field from '../assets/images/field-4x5.jpg';
+// Square crop of context/originals/ghilbi.png (an illustration made from her photo), centred on her face, keeping the ladybird.
+import stickerArt from '../assets/images/sticker-portrait.jpg';
+
+const essays = await getEssays();
+const source = essays.find((e) => e.id === intro.epigraphSource);
+// The three most recent, in the order they appear on the research page.
+const selected = publications.slice(0, 3);
+const site = Astro.site!;
+
+const issue = [
+  { kicker: '01 Writing', teaser: 'Five essays on gender, family and the natural world', href: '#writing', tint: 'var(--pink)' },
+  { kicker: '02 Research', teaser: 'Bears, pangolins, barking deer and hornbills', href: '/research', tint: 'var(--mint)' },
+  { kicker: '03 About', teaser: 'From Kathmandu to Coventry, by way of Norway', href: '/about', tint: 'var(--lilac)' },
+];
+---
+
+<Base jsonLd={[personLd(site), { '@context': 'https://schema.org', '@type': 'WebSite', name: person.name, url: site.href }]}>
+  <section class="cover wrap grid" aria-labelledby="name">
+    <h1 id="name" class="mast">
+      <span class="l1">{person.givenName}</span>
+      <span class="l2 serif-i">{person.familyName}</span>
+    </h1>
+
+    <!-- Two prints taped to the page, with a sticker slapped across them. -->
+    <div class="collage">
+      <TapedPrint
+        class="p1"
+        image={portrait}
+        alt="Shreyashi Bista, smiling, in a blue dress, standing at the arch of a stone cloister."
+        caption="Plate I"
+        tilt={-4}
+        widths={[280, 420, 560]}
+        sizes="(min-width: 64em) 22vw, (min-width: 48em) 30vw, 60vw"
+        loading="eager"
+        priority
+      />
+      <TapedPrint
+        class="p2"
+        image={field}
+        alt="Shreyashi Bista on a boulder-strewn forest trail, smiling, with a camera, a backpack and a jacket over her arm."
+        caption="In the field"
+        tilt={5}
+        tape={7}
+        widths={[240, 360, 480]}
+        sizes="(min-width: 64em) 18vw, (min-width: 48em) 25vw, 50vw"
+        loading="eager"
+      />
+      <figure class="sticker sticker-art" aria-label={`Essays and research, ${person.location}`}>
+        <Picture
+          class="face"
+          src={stickerArt}
+          alt="An illustrated portrait of Shreyashi Bista."
+          formats={['avif', 'webp']}
+          widths={[160, 240, 320]}
+          sizes="(min-width: 64em) 9rem, 7rem"
+          loading="eager"
+        />
+        {/* The words run round the rim of the sticker. */}
+        <svg class="ring" viewBox="0 0 200 200" aria-hidden="true">
+          <defs>
+            <path id="sticker-rim" d="M100,100 m-83,0 a83,83 0 1,1 166,0 a83,83 0 1,1 -166,0" />
+          </defs>
+          <text textLength="515" lengthAdjust="spacing">
+            <textPath href="#sticker-rim">Essays &amp; research · Kathmandu ·</textPath>
+          </text>
+        </svg>
+      </figure>
+    </div>
+
+    <div class="intro">
+      <figure class="epigraph reveal" style="--i: 1">
+        <blockquote cite={source ? `/writing/${source.id}` : undefined}>
+          <p class="serif-i">“…to be a part of it rather than becoming a master to it.”</p>
+        </blockquote>
+        {
+          source && (
+            <figcaption class="label">
+              From <a href={`/writing/${source.id}`}>{source.data.title}</a>
+            </figcaption>
+          )
+        }
+      </figure>
+      <p class="lede reveal" style="--i: 2">{intro.text}</p>
+    </div>
+  </section>
+
+  <nav class="issue wrap" aria-labelledby="issue-label">
+    <p class="label" id="issue-label">In this issue</p>
+    <ol class="issue-list" role="list">
+      {
+        issue.map((item, i) => (
+          <li style={`--tint: ${item.tint}; --tilt: ${[-1.5, 1, -0.5][i]}deg`}>
+            <a href={item.href}>
+              <span class="kicker label">{item.kicker}</span>
+              <span class="teaser">{item.teaser}</span>
+              <span class="go" aria-hidden="true">
+                →
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <section class="wrap block" aria-labelledby="writing">
+    <SectionHead number="01" title="Writing" id="writing" href="/writing" linkLabel="All writing" />
+    <CoverLines essays={essays} />
+  </section>
+
+  <section class="wrap block" aria-labelledby="research">
+    <SectionHead number="02" title="Research" id="research" href="/research" linkLabel="Publications and theses" />
+    <ol class="cards" role="list">
+      {
+        selected.map((p, i) => (
+          <CatalogueCard
+            index={i}
+            mark={p.year ? String(p.year) : (p.status ?? '')}
+            note={p.role}
+            title={p.title}
+            venue={p.venue}
+            href={p.href}
+            linkLabel={p.linkLabel}
+          />
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="band about-band" aria-labelledby="about">
+    <div class="wrap">
+      <SectionHead number="03" title="About" id="about" href="/about" linkLabel="Read the CV" />
+      <div class="bio">
+        <p>
+          Shreyashi Bista is a conservation researcher from Kathmandu, Nepal. Her work sits where wildlife ecology meets
+          people: Asiatic black bears and the communities who live beside them in Gaurishankar, compensation for
+          wildlife damage around Shuklaphanta National Park, and the place of gender and social inclusion in Nepal’s
+          biodiversity planning.
+        </p>
+        <p>
+          She also writes essays, on gender, family and the natural world, and is a member of the editorial team at
+          GlobalNYT.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band contact-band" aria-labelledby="contact">
+    <div class="wrap">
+      <SectionHead number="04" title="Contact" id="contact" />
+      <div class="grid contact">
+        <a class="email serif-i" href={`mailto:${person.email}`}>{person.email}</a>
+        <p class="elsewhere">
+          <a href={person.researchGate} rel="me">ResearchGate</a>
+          <a href={person.cvPdf}>CV (PDF)</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cover {
+    padding-block: var(--space-6) var(--space-7);
+    overflow-x: clip;
+  }
+
+  .mast {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    font-size: var(--step-mast);
+    line-height: 0.8;
+    text-wrap: nowrap;
+  }
+
+  .l1 {
+    display: block;
+    font-weight: 800;
+    font-stretch: 75%;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  /* The surname in red serif italic, pulled up under the caps and pushed right. */
+  .l2 {
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-top: -0.04em;
+    padding-right: 0.06em;
+    color: var(--red);
+    font-size: 0.9em;
+    line-height: 0.9;
+  }
+
+  /* Collage ---------------------------------------------------------------- */
+  .collage {
+    position: relative;
+    grid-column: 1 / -1;
+    margin-top: var(--space-6);
+    padding-top: var(--space-3);
+  }
+
+  .collage :global(.p1) {
+    width: 62%;
+  }
+
+  .collage :global(.p2) {
+    z-index: 1;
+    width: 50%;
+    margin-left: auto;
+    margin-top: -42%;
+  }
+
+  .sticker {
+    position: absolute;
+    z-index: 2;
+    top: 52%;
+    left: 34%;
+    display: grid;
+    place-content: center;
+    width: clamp(6.5rem, 24vw, 9.5rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--pink);
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 85%;
+    font-size: clamp(0.8125rem, 0.6rem + 0.9vw, 1.125rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    rotate: -12deg;
+  }
+
+  /* With the illustrated portrait: a bigger sticker, face in the middle, words round the rim. */
+  .sticker-art {
+    margin: 0;
+    width: clamp(8rem, 30vw, 12rem);
+    padding: 0;
+  }
+
+  .sticker-art :global(.face) {
+    position: absolute;
+    inset: 15.5%;
+    width: 69%;
+    height: 69%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+  }
+
+  .ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: spin 40s linear infinite;
+  }
+
+  .ring text {
+    font-family: var(--font-display);
+    font-weight: 750;
+    font-stretch: 82%;
+    font-size: 17px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    fill: var(--ink);
+  }
+
+  @keyframes spin {
+    to {
+      rotate: 1turn;
+    }
+  }
+
+  /* Intro ------------------------------------------------------------------ */
+  .intro {
+    grid-column: 1 / -1;
+    margin-top: var(--space-7);
+  }
+
+  .epigraph blockquote p {
+    font-size: var(--step-2);
+    line-height: 1.12;
+  }
+
+  .epigraph figcaption {
+    margin-top: var(--space-3);
+  }
+
+  .epigraph figcaption a {
+    text-transform: none;
+    letter-spacing: 0;
+    font-family: var(--font-text);
+    font-style: italic;
+    font-size: var(--step--1);
+  }
+
+  .lede {
+    margin-top: var(--space-5);
+    font-size: var(--step-1);
+    line-height: 1.45;
+    max-width: 34ch;
+  }
+
+  /* In this issue ------------------------------------------------------------ */
+  .issue {
+    margin-top: var(--space-6);
+  }
+
+  .issue-list {
+    list-style: none;
+    padding: 0;
+    margin-top: var(--space-4);
+    display: grid;
+    gap: var(--space-4) var(--gutter);
+  }
+
+  .issue-list li {
+    rotate: var(--tilt);
+    transition: rotate var(--dur-reveal) var(--ease);
+  }
+
+  .issue-list li:hover,
+  .issue-list li:focus-within {
+    rotate: 0deg;
+  }
+
+  .issue-list a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: var(--space-2) var(--space-4);
+    height: 100%;
+    padding: var(--space-4) var(--space-5);
+    background: var(--tint);
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .kicker {
+    grid-column: 1 / -1;
+    color: var(--ink);
+  }
+
+  .teaser {
+    font-family: var(--font-display);
+    font-weight: 750;
+    font-stretch: 82%;
+    font-size: var(--step-1);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .go {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--red);
+    transition: translate var(--dur-hover) var(--ease);
+  }
+
+  .issue-list a:hover .go,
+  .issue-list a:focus-visible .go {
+    translate: 6px 0;
+  }
+
+  .block {
+    margin-top: var(--space-8);
+  }
+
+  /* Research */
+  .cards {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-6) var(--gutter);
+  }
+
+  /* Bands */
+  .band {
+    margin-top: var(--space-8);
+    padding-block: var(--space-6) var(--space-8);
+  }
+
+  .band + .band {
+    margin-top: 0;
+  }
+
+  .about-band {
+    --band: var(--lilac);
+  }
+
+  .contact-band {
+    --band: var(--butter);
+  }
+
+  .bio {
+    max-width: 46rem;
+  }
+
+  .bio p:first-child {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-stretch: 88%;
+    font-size: var(--step-2);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .bio p + p {
+    margin-top: var(--space-5);
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--ink-2);
+  }
+
+  .email {
+    grid-column: 1 / -1;
+    font-size: var(--step-email);
+    line-height: 1.1;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.14em;
+    overflow-wrap: anywhere;
+  }
+
+  .elsewhere {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    margin-top: var(--space-6);
+  }
+
+  .elsewhere a {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 85%;
+    font-size: var(--step-1);
+    letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 48em) {
+    .collage {
+      grid-column: 1 / span 4;
+      grid-row: 2;
+      align-self: start;
+      margin-top: calc(var(--step-mast) * -0.55);
+    }
+    .intro {
+      grid-column: 5 / -1;
+      grid-row: 2;
+      align-self: end;
+      margin-top: var(--space-7);
+    }
+    .epigraph blockquote p {
+      text-indent: -0.4em; /* hang the opening quote and ellipsis */
+    }
+    .issue-list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .email,
+    .elsewhere {
+      grid-column: 2 / -1;
+    }
+    .bio {
+      margin-left: calc((100% - 7 * var(--gutter)) / 8 + var(--gutter));
+    }
+  }
+
+  /* Tablet: the collage column is narrow, so tuck the sticker under the portrait. */
+  @media (min-width: 48em) and (max-width: 63.99em) {
+    .intro {
+      padding-left: var(--space-5);
+    }
+    .collage :global(.p2) {
+      width: 48%;
+    }
+    .sticker {
+      top: 66%;
+      left: -0.75rem;
+      width: 6.5rem;
+    }
+    .sticker-art {
+      top: 58%;
+      width: 8.5rem;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .cover {
+      --cover-top: var(--space-7);
+      padding-top: var(--space-7);
+    }
+    .collage {
+      grid-column: 1 / span 5;
+      margin-top: calc(var(--step-mast) * -0.62);
+    }
+    .intro {
+      grid-column: 7 / span 6;
+    }
+    .issue {
+      margin-top: var(--space-7);
+    }
+    .cards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .bio {
+      margin-left: calc((100% - 11 * var(--gutter)) / 12 + var(--gutter));
+    }
+  }
+</style>
